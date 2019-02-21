@@ -157,7 +157,7 @@ describe('createInstantSearchServer', () => {
         shallow(<InstantSearch indexName="name" {...props} />);
 
       expect(() => trigger()).toThrowErrorMatchingInlineSnapshot(
-        `"react-instantsearch:: \`searchClient\` cannot be used with \`appId\`, \`apiKey\` or \`algoliaClient\`."`
+        `"react-instantsearch: \`searchClient\` cannot be used with \`appId\`, \`apiKey\` or \`algoliaClient\`."`
       );
     });
 
@@ -173,7 +173,7 @@ describe('createInstantSearchServer', () => {
       const trigger = () => shallow(<InstantSearch {...props} />);
 
       expect(() => trigger()).toThrowErrorMatchingInlineSnapshot(
-        `"react-instantsearch:: \`searchClient\` cannot be used with \`appId\`, \`apiKey\` or \`algoliaClient\`."`
+        `"react-instantsearch: \`searchClient\` cannot be used with \`appId\`, \`apiKey\` or \`algoliaClient\`."`
       );
     });
 
@@ -189,7 +189,7 @@ describe('createInstantSearchServer', () => {
       const trigger = () => shallow(<InstantSearch {...props} />);
 
       expect(() => trigger()).toThrowErrorMatchingInlineSnapshot(
-        `"react-instantsearch:: \`searchClient\` cannot be used with \`appId\`, \`apiKey\` or \`algoliaClient\`."`
+        `"react-instantsearch: \`searchClient\` cannot be used with \`appId\`, \`apiKey\` or \`algoliaClient\`."`
       );
     });
   });
