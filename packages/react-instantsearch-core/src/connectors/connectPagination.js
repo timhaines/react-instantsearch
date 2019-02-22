@@ -64,7 +64,9 @@ export default createConnector({
     const nbPages = results.nbPages;
     return {
       nbPages,
-      currentRefinement: getCurrentRefinement(props, searchState, this.context),
+      currentRefinement: getCurrentRefinement(props, searchState, {
+        ais: this.props.contextValue,
+      }),
       canRefine: nbPages > 1,
     };
   },
@@ -77,9 +79,9 @@ export default createConnector({
     return cleanUpValue(searchState, this.context, getId());
   },
 
-  getSearchParameters(searchParameters, props, searchState) {
+  getSearchParameters(searchParameters, props, searchState, context) {
     return searchParameters.setPage(
-      getCurrentRefinement(props, searchState, this.context) - 1
+      getCurrentRefinement(props, searchState, context) - 1
     );
   },
 

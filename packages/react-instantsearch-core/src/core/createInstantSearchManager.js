@@ -5,6 +5,7 @@ import createStore from './createStore';
 import { HIGHLIGHT_TAGS } from './highlight';
 import { hasMultipleIndices } from './indexUtils';
 
+// @TODO: both of this is for <Index />, we should mark it differently
 const isMultiIndexContext = widget => hasMultipleIndices(widget.context);
 const isTargetedIndexEqualIndex = (widget, indexId) =>
   widget.context.multiIndexContext.targetedIndex === indexId;
@@ -121,7 +122,7 @@ export default function createInstantSearchManager({
       })
       .reduce((indices, widget) => {
         const indexId = isMultiIndexContext(widget)
-          ? widget.context.multiIndexContext.targetedIndex
+          ? widget.context.multiIndexContext.targetedIndex // @TODO: <Index /> new context migration
           : widget.props.indexId;
 
         const widgets = indices[indexId] || [];

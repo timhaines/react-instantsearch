@@ -223,10 +223,10 @@ export default createConnector({
 
   getMetadata(props, searchState) {
     const id = getId(props);
-    const context = this.context;
+    const context = { ais: props.contextValue };
     return {
       id,
-      index: getIndexId(this.context),
+      index: getIndexId(context),
       items:
         getCurrentRefinement(props, searchState, context).length > 0
           ? [

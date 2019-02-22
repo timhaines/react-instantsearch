@@ -9,6 +9,7 @@ import {
   HIGHLIGHT_TAGS,
 } from 'react-instantsearch-core';
 
+// @TODO: read correctly from both contexts (this is a duplicate of indexUtils)
 const getIndexId = context =>
   context && context.multiIndexContext
     ? context.multiIndexContext.targetedIndex

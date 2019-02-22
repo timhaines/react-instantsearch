@@ -1,6 +1,7 @@
 import { has, omit, get } from 'lodash';
 
 export function getIndexId(context) {
+  // @TODO: change all usages of this to give both contexts
   return context && context.multiIndexContext
     ? context.multiIndexContext.targetedIndex
     : context.ais.mainTargetedIndex;
@@ -16,6 +17,7 @@ export function getResults(searchResults, context) {
   }
 }
 
+// @TODO: this function will be removable
 export function hasMultipleIndices(context) {
   return context && context.multiIndexContext;
 }
@@ -213,7 +215,7 @@ export function cleanUpValue(searchState, context, id) {
   const { namespace, attributeName } = getNamespaceAndAttributeName(id);
 
   if (hasMultipleIndices(context) && Boolean(searchState.indices)) {
-    return cleanUpValueWithMutliIndex({
+    return cleanUpValueWithMultiIndex({
       attribute: attributeName,
       searchState,
       indexId,
@@ -246,7 +248,7 @@ function cleanUpValueWithSingleIndex({
   return omit(searchState, id);
 }
 
-function cleanUpValueWithMutliIndex({
+function cleanUpValueWithMultiIndex({
   searchState,
   indexId,
   id,

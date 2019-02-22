@@ -219,7 +219,8 @@ export default createConnector({
         label: `${props.attribute}: ${label}`,
         attribute: props.attribute,
         currentRefinement: label,
-        value: nextState => refine(props, nextState, '', this.context),
+        value: nextState =>
+          refine(props, nextState, '', { ais: props.contextValue }),
       });
     }
     return { id, index, items };

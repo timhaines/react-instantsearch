@@ -302,7 +302,7 @@ export default createConnector({
       props,
       searchState,
       this._currentRange,
-      this.context
+      { ais: props.contextValue }
     );
 
     const items = [];

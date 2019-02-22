@@ -215,14 +215,12 @@ export default createConnector({
 
   getMetadata(props, searchState) {
     const id = getId(props);
-    const currentRefinement = getCurrentRefinement(
-      props,
-      searchState,
-      this.context
-    );
+    const currentRefinement = getCurrentRefinement(props, searchState, {
+      ais: props.contextValue,
+    });
     return {
       id,
-      index: getIndexId(this.context),
+      index: getIndexId({ ais: props.contextValue }),
       items:
         currentRefinement === null
           ? []
@@ -230,7 +228,8 @@ export default createConnector({
               {
                 label: `${props.attribute}: ${currentRefinement}`,
                 attribute: props.attribute,
-                value: nextState => refine(props, nextState, '', this.context),
+                value: nextState =>
+                  refine(props, nextState, '', { ais: props.contextValue }),
                 currentRefinement,
               },
             ],

@@ -42,9 +42,16 @@ class Index extends Component {
     this.unregisterWidget = this.context.ais.widgetsManager.registerWidget(
       this
     );
+
+    this.state = {
+      multiIndexContext: {
+        targetedIndex: this.props.indexId,
+      },
+    };
   }
 
   componentWillMount() {
+    // What is this for? I don't think it can be replaced
     this.context.ais.onSearchParameters(
       this.getSearchParameters.bind(this),
       this.getChildContext(),
@@ -62,12 +69,9 @@ class Index extends Component {
     this.unregisterWidget();
   }
 
+  // @TODO: move to new context
   getChildContext() {
-    return {
-      multiIndexContext: {
-        targetedIndex: this.props.indexId,
-      },
-    };
+    return this.state.multiIndexContext;
   }
 
   getSearchParameters(searchParameters, props) {

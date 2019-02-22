@@ -262,11 +262,9 @@ export default createConnector({
   getMetadata(props, searchState) {
     const rootAttribute = props.attributes[0];
     const id = getId(props);
-    const currentRefinement = getCurrentRefinement(
-      props,
-      searchState,
-      this.context
-    );
+    const currentRefinement = getCurrentRefinement(props, searchState, {
+      ais: props.contextValue,
+    });
 
     return {
       id,

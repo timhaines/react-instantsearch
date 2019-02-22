@@ -96,9 +96,9 @@ export default createConnector({
    * To be considered as a widget you need either getSearchParameters, getMetadata or getTransitionState
    * See createConnector.js
    * */
-  getSearchParameters(searchParameters, props, searchState) {
+  getSearchParameters(searchParameters, props, searchState, context) {
     return searchParameters.setQuery(
-      getCurrentRefinement(props, searchState, this.context)
+      getCurrentRefinement(props, searchState, context)
     );
   },
 });

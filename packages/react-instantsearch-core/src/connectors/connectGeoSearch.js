@@ -181,12 +181,8 @@ export default createConnector({
     return refine(searchState, nextValue, this.context);
   },
 
-  getSearchParameters(searchParameters, props, searchState) {
-    const currentRefinement = getCurrentRefinement(
-      props,
-      searchState,
-      this.context
-    );
+  getSearchParameters(searchParameters, props, searchState, context) {
+    const currentRefinement = getCurrentRefinement(props, searchState, context);
 
     if (!currentRefinement) {
       return searchParameters;
@@ -207,11 +203,9 @@ export default createConnector({
     const id = getBoundingBoxId();
     const index = getIndexId(this.context);
     const nextRefinement = {};
-    const currentRefinement = getCurrentRefinement(
-      props,
-      searchState,
-      this.context
-    );
+    const currentRefinement = getCurrentRefinement(props, searchState, {
+      ais: props.contextValue,
+    });
 
     if (currentRefinement) {
       items.push({
