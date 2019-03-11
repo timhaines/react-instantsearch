@@ -54,8 +54,8 @@ function refine(props, searchState, nextPage, context) {
 export default createConnector({
   displayName: 'AlgoliaPagination',
 
-  getProvidedProps(props, searchState, searchResults) {
-    const results = getResults(searchResults, this.context);
+  getProvidedProps(props, searchState, searchResults, context) {
+    const results = getResults(searchResults, context);
 
     if (!results) {
       return null;
@@ -65,18 +65,18 @@ export default createConnector({
     return {
       nbPages,
       currentRefinement: getCurrentRefinement(props, searchState, {
-        ais: this.props.contextValue,
+        ais: props.contextValue,
       }),
       canRefine: nbPages > 1,
     };
   },
 
   refine(props, searchState, nextPage) {
-    return refine(props, searchState, nextPage, this.context);
+    return refine(props, searchState, nextPage, { ais: props.contextValue });
   },
 
   cleanUp(props, searchState) {
-    return cleanUpValue(searchState, this.context, getId());
+    return cleanUpValue(searchState, { ais: props.contextValue }, getId());
   },
 
   getSearchParameters(searchParameters, props, searchState, context) {
