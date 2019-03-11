@@ -17,7 +17,7 @@ export function getResults(searchResults, context) {
   }
 }
 
-// @TODO: this function will be removable
+// @TODO: this function will be removable by IndexContext.Consumer
 export function hasMultipleIndices(context) {
   return context && context.multiIndexContext;
 }
