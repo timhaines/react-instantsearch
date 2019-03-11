@@ -1,5 +1,5 @@
-import { has, isEqual } from 'lodash';
-import React, { Component, ReactType, ReactNode } from 'react';
+import { isEqual } from 'lodash';
+import React, { Component, ReactType } from 'react';
 import { shallowEqual, getDisplayName, removeEmptyKey } from './utils';
 import { InstantSearchConsumer, InstantSearchContext } from './context';
 
@@ -37,7 +37,7 @@ type ConnectorDescription = {
   /**
    * a function to filter the local state
    */
-  refine: (...args: any[]) => any;
+  refine?: (...args: any[]) => any;
   /**
    * function transforming the local state to a SearchParameters
    */
@@ -45,11 +45,11 @@ type ConnectorDescription = {
   /**
    * metadata of the widget (for current refinements)
    */
-  getMetadata: (...args: any[]) => any;
+  getMetadata?: (...args: any[]) => any;
   /**
    * hook after the state has changed
    */
-  transitionState: (...args: any[]) => any;
+  transitionState?: (...args: any[]) => any;
   /**
    * transform the state into props passed to the wrapped component.
    * Receives (props, widgetStates, searchState, metadata) and returns the local state.
@@ -58,18 +58,18 @@ type ConnectorDescription = {
   /**
    * Receives props and return the id that will be used to identify the widget
    */
-  getId: (...args: any[]) => string;
+  getId?: (...args: any[]) => string;
   /**
    * hook when the widget will unmount. Receives (props, searchState) and return a cleaned state.
    */
-  cleanUp: (...args: any[]) => any;
-  searchForFacetValues: (...args: any[]) => any;
-  shouldComponentUpdate: (...args: any[]) => boolean;
+  cleanUp?: (...args: any[]) => any;
+  searchForFacetValues?: (...args: any[]) => any;
+  shouldComponentUpdate?: (...args: any[]) => boolean;
   /**
    * PropTypes forwarded to the wrapped component.
    */
-  propTypes: {}; // I can't find a definition for a propTypes object
-  defaultProps: {};
+  propTypes?: {}; // I can't find a definition for a propTypes object
+  defaultProps?: {};
 };
 
 /**
@@ -89,14 +89,10 @@ export default function createConnector(connectorDesc: ConnectorDescription) {
     );
   }
 
-  const hasRefine = has(connectorDesc, 'refine');
-  const hasSearchForFacetValues = has(connectorDesc, 'searchForFacetValues');
-  const hasSearchParameters = has(connectorDesc, 'getSearchParameters');
-  const hasMetadata = has(connectorDesc, 'getMetadata');
-  const hasTransitionState = has(connectorDesc, 'transitionState');
-  const hasCleanUp = has(connectorDesc, 'cleanUp');
-  const hasShouldComponentUpdate = has(connectorDesc, 'shouldComponentUpdate');
-  const isWidget = hasSearchParameters || hasMetadata || hasTransitionState;
+  const isWidget =
+    typeof connectorDesc.getSearchParameters === 'function' ||
+    typeof connectorDesc.getMetadata === 'function' ||
+    typeof connectorDesc.transitionState === 'function';
 
   type ConnectorProps = {
     contextValue: InstantSearchContext;
@@ -106,7 +102,7 @@ export default function createConnector(connectorDesc: ConnectorDescription) {
     providedProps: {};
   };
 
-  return (Composed: ReactNode) => {
+  return (Composed: ReactType) => {
     class Connector extends Component<ConnectorProps, ConnectorState> {
       static displayName = `${connectorDesc.displayName}(${getDisplayName(
         Composed
@@ -169,10 +165,9 @@ export default function createConnector(connectorDesc: ConnectorDescription) {
           if (isWidget) {
             this.props.contextValue.widgetsManager.update();
 
-            if (connectorDesc.transitionState) {
+            if (typeof connectorDesc.transitionState === 'function') {
               this.props.contextValue.onSearchStateChange(
-                connectorDesc.transitionState.call(
-                  this,
+                connectorDesc.transitionState(
                   nextProps,
                   this.props.contextValue.store.getState().widgets,
                   this.props.contextValue.store.getState().widgets
@@ -184,9 +179,8 @@ export default function createConnector(connectorDesc: ConnectorDescription) {
       }
 
       shouldComponentUpdate(nextProps, nextState) {
-        if (hasShouldComponentUpdate) {
-          return connectorDesc.shouldComponentUpdate.call(
-            this,
+        if (typeof connectorDesc.shouldComponentUpdate === 'function') {
+          return connectorDesc.shouldComponentUpdate(
             this.props,
             nextProps,
             this.state,
@@ -222,9 +216,8 @@ export default function createConnector(connectorDesc: ConnectorDescription) {
         if (this.unregisterWidget) {
           this.unregisterWidget();
 
-          if (hasCleanUp) {
-            const nextState = connectorDesc.cleanUp.call(
-              this,
+          if (typeof connectorDesc.cleanUp === 'function') {
+            const nextState = connectorDesc.cleanUp(
               this.props,
               this.props.contextValue.store.getState().widgets
             );
@@ -261,8 +254,7 @@ export default function createConnector(connectorDesc: ConnectorDescription) {
           error,
         };
 
-        return connectorDesc.getProvidedProps.call(
-          this,
+        return connectorDesc.getProvidedProps(
           props,
           widgets,
           searchResults,
@@ -277,11 +269,11 @@ export default function createConnector(connectorDesc: ConnectorDescription) {
       getSearchParameters(searchParameters) {
         if (connectorDesc.getSearchParameters) {
           const { contextValue, ...props } = this.props;
-          return connectorDesc.getSearchParameters.call(
-            this,
+          return connectorDesc.getSearchParameters(
             searchParameters,
             props,
             contextValue.store.getState().widgets,
+            // @TODO: figure out if a better solution can be found based on usage
             { ais: contextValue }
           );
         }
@@ -290,21 +282,16 @@ export default function createConnector(connectorDesc: ConnectorDescription) {
       }
 
       getMetadata(nextWidgetsState) {
-        if (hasMetadata) {
-          return connectorDesc.getMetadata.call(
-            this,
-            this.props,
-            nextWidgetsState
-          );
+        if (typeof connectorDesc.getMetadata === 'function') {
+          return connectorDesc.getMetadata(this.props, nextWidgetsState);
         }
 
         return {};
       }
 
       transitionState(prevWidgetsState, nextWidgetsState) {
-        if (hasTransitionState) {
-          return connectorDesc.transitionState.call(
-            this,
+        if (typeof connectorDesc.transitionState === 'function') {
+          return connectorDesc.transitionState(
             this.props,
             prevWidgetsState,
             nextWidgetsState
@@ -316,8 +303,8 @@ export default function createConnector(connectorDesc: ConnectorDescription) {
 
       refine = (...args) => {
         this.props.contextValue.onInternalStateUpdate(
-          connectorDesc.refine.call(
-            this,
+          // refine will always be defined here because the prop is only given conditionally
+          connectorDesc.refine!(
             this.props,
             this.props.contextValue.store.getState().widgets,
             ...args
@@ -327,8 +314,8 @@ export default function createConnector(connectorDesc: ConnectorDescription) {
 
       createURL = (...args) =>
         this.props.contextValue.createHrefForState(
-          connectorDesc.refine.call(
-            this,
+          // refine will always be defined here because the prop is only given conditionally
+          connectorDesc.refine!(
             this.props,
             this.props.contextValue.store.getState().widgets,
             ...args
@@ -337,7 +324,8 @@ export default function createConnector(connectorDesc: ConnectorDescription) {
 
       searchForFacetValues = (...args) => {
         this.props.contextValue.onSearchForFacetValues(
-          connectorDesc.searchForFacetValues(
+          // searchForFacetValues will always be defined here because the prop is only given conditionally
+          connectorDesc.searchForFacetValues!(
             this.props,
             this.props.contextValue.store.getState().widgets,
             ...args
@@ -352,13 +340,15 @@ export default function createConnector(connectorDesc: ConnectorDescription) {
           return null;
         }
 
-        const refineProps = hasRefine
-          ? { refine: this.refine, createURL: this.createURL }
-          : {};
+        const refineProps =
+          typeof connectorDesc.refine === 'function'
+            ? { refine: this.refine, createURL: this.createURL }
+            : {};
 
-        const searchForFacetValuesProps = hasSearchForFacetValues
-          ? { searchForItems: this.searchForFacetValues }
-          : {};
+        const searchForFacetValuesProps =
+          typeof connectorDesc.searchForFacetValues === 'function'
+            ? { searchForItems: this.searchForFacetValues }
+            : {};
 
         return (
           <Composed
