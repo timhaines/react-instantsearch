@@ -106,14 +106,14 @@ export const WrapWithHits = ({
 
   const hits = hitsElement || <CustomHits />;
 
-  const searchParameters = {
-    hitsPerPage: 3,
-    ...askedSearchParameters,
-  };
+  // const searchParameters = {
+  //   hitsPerPage: 3,
+  //   ...askedSearchParameters,
+  // };
 
   return (
     <InstantSearch appId={appId} apiKey={apiKey} indexName={indexName}>
-      <Configure {...searchParameters} />
+      {/* <Configure {...searchParameters} /> */}
       <div>
         <div className="container widget-container">{children}</div>
         <div>
