@@ -13,7 +13,10 @@ export type InstantSearchContext = {
   mainTargetedIndex: string;
 };
 
-const Context = createContext<InstantSearchContext>({
+export const {
+  Consumer: InstantSearchConsumer,
+  Provider: InstantSearchProvider,
+} = createContext<InstantSearchContext>({
   onInternalStateUpdate: () => undefined,
   createHrefForState: () => '#',
   onSearchForFacetValues: () => undefined,
@@ -24,6 +27,3 @@ const Context = createContext<InstantSearchContext>({
   widgetsManager: {},
   mainTargetedIndex: '',
 });
-
-export const InstantSearchConsumer = Context.Consumer;
-export const InstantSearchProvider = Context.Provider;
