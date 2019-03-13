@@ -1360,7 +1360,7 @@ describe('createConnector', () => {
     });
   });
 
-  describe.only('wrapped with InstantSearchProvider', () => {
+  describe('wrapped with InstantSearchProvider', () => {
     it('default export reads from context', () => {
       const state = createFakeState({
         widgets: {
