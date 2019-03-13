@@ -379,8 +379,10 @@ export function createConnectorWithoutContext(
   };
 }
 
-const createConnectorWithContext = args => Composed => {
-  const Connector = createConnectorWithoutContext(args)(Composed);
+const createConnectorWithContext = (connectorDesc: ConnectorDescription) => (
+  Composed: ReactType
+) => {
+  const Connector = createConnectorWithoutContext(connectorDesc)(Composed);
 
   return props => (
     <InstantSearchConsumer>
