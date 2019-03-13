@@ -1,5 +1,5 @@
 import React from 'react';
-import Enzyme, { mount, shallow, ShallowWrapper } from 'enzyme';
+import Enzyme, { mount, shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import createConnector, {
   createConnectorWithoutContext,
@@ -7,8 +7,6 @@ import createConnector, {
 import { InstantSearchProvider } from '../context';
 
 Enzyme.configure({ adapter: new Adapter() });
-
-// @TODO: remove this comment, it's here just for the diff
 
 describe('createConnector', () => {
   const createFakeState = props => ({
@@ -1024,7 +1022,6 @@ describe('createConnector', () => {
   });
 
   describe('getMetadata', () => {
-    // @TODO: fix test
     it('returns the widget metadata when getMetadata is provided', () => {
       const getMetadata = function(props, searchState) {
         return {
@@ -1090,7 +1087,6 @@ describe('createConnector', () => {
   });
 
   describe('transitionState', () => {
-    // @TODO: fix test
     it('returns the widget transitionState when transitionState is provided', () => {
       const transitionState = function(
         props,
@@ -1361,6 +1357,65 @@ describe('createConnector', () => {
           maxFacetHits: 10,
         },
       });
+    });
+  });
+
+  describe.only('wrapped with InstantSearchProvider', () => {
+    it('default export reads from context', () => {
+      const state = createFakeState({
+        widgets: {
+          query: 'hello',
+        },
+      });
+
+      const context = createFakeContext({
+        store: createFakeStore({
+          getState: () => state,
+        }),
+      });
+
+      const Dummy = props => {
+        return (
+          <pre>
+            {JSON.stringify(
+              props,
+              (key, val) => {
+                if (key === 'contextValue') {
+                  expect(val).toEqual(context);
+                  return 'context';
+                }
+                return val;
+              },
+              2
+            ).replace(/"/g, '')}
+          </pre>
+        );
+      };
+
+      const Connected = createConnector({
+        displayName: 'Connector',
+        getProvidedProps: props => ({ providedProps: props }),
+      })(Dummy);
+
+      const props = {
+        message: 'hello',
+      };
+
+      const wrapper = mount(
+        <InstantSearchProvider value={context}>
+          <Connected {...props} />
+        </InstantSearchProvider>
+      );
+
+      expect(wrapper.html()).toMatchInlineSnapshot(`
+"<pre>{
+  message: hello,
+  providedProps: {
+    contextValue: context,
+    message: hello
+  }
+}</pre>"
+`);
     });
   });
 });
