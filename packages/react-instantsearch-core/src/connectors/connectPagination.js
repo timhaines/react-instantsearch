@@ -54,8 +54,8 @@ function refine(props, searchState, nextPage, context) {
 export default createConnector({
   displayName: 'AlgoliaPagination',
 
-  getProvidedProps(props, searchState, searchResults, context) {
-    const results = getResults(searchResults, context);
+  getProvidedProps(props, searchState, searchResults) {
+    const results = getResults(searchResults, { ais: props.contextValue });
 
     if (!results) {
       return null;
