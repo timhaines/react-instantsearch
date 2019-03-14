@@ -991,6 +991,7 @@ describe('createConnector', () => {
         },
         providedProps: {
           hello: 'there',
+          contextValue: context,
         },
         searchState: {
           query: 'hello',

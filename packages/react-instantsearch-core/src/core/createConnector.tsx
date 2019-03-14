@@ -273,14 +273,11 @@ export function createConnectorWithoutContext(
 
       getSearchParameters(searchParameters) {
         if (connectorDesc.getSearchParameters) {
-          const { contextValue, ...props } = this.props;
           return connectorDesc.getSearchParameters.call(
             this,
             searchParameters,
-            props,
-            contextValue.store.getState().widgets,
-            // @TODO: figure out if a better solution can be found based on usage
-            { ais: contextValue }
+            this.props,
+            this.props.contextValue.store.getState().widgets,
           );
         }
 

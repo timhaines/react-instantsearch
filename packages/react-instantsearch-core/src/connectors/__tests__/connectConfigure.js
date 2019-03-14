@@ -7,18 +7,40 @@ describe('connectConfigure', () => {
   describe('single index', () => {
     const contextValue = { ais: { mainTargetedIndex: 'index' } };
 
-    it('propagates the props to the SearchParameters without children', () => {
+    it('propagates the props to the SearchParameters without children & contextValue', () => {
       const searchParameters = connect.getSearchParameters(
         new SearchParameters(),
-        { distinct: 1, whatever: 'please', children: 'whatever' },
-        {},
-        contextValue
+        { distinct: 1, whatever: 'please', children: 'whatever', contextValue },
+        {}
+      );
+
+      expect(searchParameters).toEqual(
+        expect.objectContaining({
+          distinct: 1,
+          whatever: 'please',
+        })
+      );
+      expect(searchParameters).not.toEqual(
+        expect.objectContaining({
+          children: 'whatever',
+          contextValue,
+        })
       );
       expect(searchParameters.getQueryParameter('distinct')).toEqual(1);
       expect(searchParameters.getQueryParameter('whatever')).toEqual('please');
       expect(
         searchParameters.getQueryParameter.bind(searchParameters, 'children')
-      ).toThrow();
+      ).toThrowErrorMatchingInlineSnapshot(
+        `"Parameter 'children' is not an attribute of SearchParameters (http://algolia.github.io/algoliasearch-helper-js/docs/SearchParameters.html)"`
+      );
+      expect(
+        searchParameters.getQueryParameter.bind(
+          searchParameters,
+          'contextValue'
+        )
+      ).toThrowErrorMatchingInlineSnapshot(
+        `"Parameter 'contextValue' is not an attribute of SearchParameters (http://algolia.github.io/algoliasearch-helper-js/docs/SearchParameters.html)"`
+      );
     });
 
     it('calling transitionState should add configure parameters to the search state', () => {

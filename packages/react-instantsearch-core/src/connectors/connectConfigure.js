@@ -16,7 +16,7 @@ export default createConnector({
     return {};
   },
   getSearchParameters(searchParameters, props) {
-    const items = omit(props, 'children');
+    const items = omit(props, 'children', 'contextValue');
     return searchParameters.setQueryParameters(items);
   },
   transitionState(props, prevSearchState, nextSearchState) {
