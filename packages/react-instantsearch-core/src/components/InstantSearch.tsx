@@ -143,7 +143,7 @@ class InstantSearch extends Component<Props, State> {
   aisManager: InstantSearchManager;
   _aisContextCache: any;
 
-  // WHY do I need to redeclare props here :(
+  // @TODO: understand why Props needs to be declared on every method
   constructor(props: Props) {
     super(props);
     this.isControlled = Boolean(props.searchState);
@@ -243,8 +243,6 @@ class InstantSearch extends Component<Props, State> {
     return this.aisManager.getWidgetsIds();
   }
 
-  /* tslint:disable member-ordering */
-  // @TODO: find out how to allow regular rendering
   render() {
     const childrenCount = Children.count(this.props.children);
     const { Root, props } = this.props.root;
@@ -260,7 +258,6 @@ class InstantSearch extends Component<Props, State> {
       );
     }
   }
-  /* tslint:enable */
 }
 
 export default InstantSearch;

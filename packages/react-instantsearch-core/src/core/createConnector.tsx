@@ -345,7 +345,6 @@ export function createConnectorWithoutContext(
       };
 
       render() {
-        // @TODO: find cleaner way to filter out this private prop everywhere
         const { contextValue, ...props } = this.props;
         if (this.state.providedProps === null) {
           return null;
