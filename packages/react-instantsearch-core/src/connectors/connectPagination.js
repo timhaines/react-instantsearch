@@ -79,9 +79,9 @@ export default createConnector({
     return cleanUpValue(searchState, { ais: props.contextValue }, getId());
   },
 
-  getSearchParameters(searchParameters, props, searchState, context) {
+  getSearchParameters(searchParameters, props, searchState) {
     return searchParameters.setPage(
-      getCurrentRefinement(props, searchState, context) - 1
+      getCurrentRefinement(props, searchState, { ais: props.contextValue }) - 1
     );
   },
 
