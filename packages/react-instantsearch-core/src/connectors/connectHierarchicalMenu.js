@@ -219,7 +219,7 @@ export default createConnector({
     return cleanUp(props, searchState, { ais: props.contextValue });
   },
 
-  getSearchParameters(searchParameters, props, searchState, context) {
+  getSearchParameters(searchParameters, props, searchState) {
     const {
       attributes,
       separator,
@@ -228,6 +228,7 @@ export default createConnector({
       showMore,
       limit,
       showMoreLimit,
+      contextValue,
     } = props;
 
     const id = getId(props);
@@ -248,7 +249,9 @@ export default createConnector({
         ),
       });
 
-    const currentRefinement = getCurrentRefinement(props, searchState, context);
+    const currentRefinement = getCurrentRefinement(props, searchState, {
+      ais: contextValue,
+    });
     if (currentRefinement !== null) {
       searchParameters = searchParameters.toggleHierarchicalFacetRefinement(
         id,
