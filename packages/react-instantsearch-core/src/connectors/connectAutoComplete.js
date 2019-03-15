@@ -81,7 +81,7 @@ export default createConnector({
     return {
       hits: getHits(searchResults),
       currentRefinement: getCurrentRefinement(props, searchState, {
-        ais: props.contextValue, // @TODO: this won't work for multi-index
+        ais: props.contextValue,
       }),
     };
   },
@@ -100,9 +100,9 @@ export default createConnector({
    * To be considered as a widget you need either getSearchParameters, getMetadata or getTransitionState
    * See createConnector.js
    * */
-  getSearchParameters(searchParameters, props, searchState, context) {
+  getSearchParameters(searchParameters, props, searchState) {
     return searchParameters.setQuery(
-      getCurrentRefinement(props, searchState, context)
+      getCurrentRefinement(props, searchState, { ais: props.contextValue })
     );
   },
 });
