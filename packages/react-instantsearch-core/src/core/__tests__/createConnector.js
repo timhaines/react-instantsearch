@@ -1410,9 +1410,6 @@ describe('createConnector', () => {
 
       expect(wrapper.html()).toMatchInlineSnapshot(`
 "<pre>{
-  indexContextValue: {
-    targetedIndex: 
-  },
   message: hello,
   providedProps: {
     contextValue: context,
