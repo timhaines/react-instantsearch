@@ -29,24 +29,28 @@ describe('connectHits', () => {
     });
   });
 
-  describe.skip('multi index', () => {
-    const context = {
-      context: {
-        ais: { mainTargetedIndex: 'first' },
-        multiIndexContext: { targetedIndex: 'second' },
-      },
-    };
-    const getProvidedProps = connect.getProvidedProps.bind(context);
+  describe('multi index', () => {
+    const contextValue = { mainTargetedIndex: 'first' };
+    const indexContextValue = { targetedIndex: 'second' };
+
     it('provides the current hits to the component', () => {
       const hits = [{}];
-      const props = getProvidedProps(null, null, {
-        results: { second: { hits } },
-      });
+      const props = connect.getProvidedProps(
+        { contextValue, indexContextValue },
+        null,
+        {
+          results: { second: { hits } },
+        }
+      );
       expect(props).toEqual({ hits });
     });
 
     it("doesn't render when no hits are available", () => {
-      const props = getProvidedProps(null, null, { results: { second: null } });
+      const props = connect.getProvidedProps(
+        { contextValue, indexContextValue },
+        null,
+        { results: { second: null } }
+      );
       expect(props).toEqual({ hits: [] });
     });
 
