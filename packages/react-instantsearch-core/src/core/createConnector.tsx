@@ -352,7 +352,7 @@ export function createConnectorWithoutContext(
       };
 
       render() {
-        const { contextValue, ...props } = this.props;
+        const { contextValue, indexContextValue, ...props } = this.props;
         if (this.state.providedProps === null) {
           return null;
         }
