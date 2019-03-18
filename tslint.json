@@ -12,6 +12,7 @@
     "ordered-imports": false,
     "no-empty": false,
     "member-access": false,
+    "prettier": true,
     "variable-name": [
       true,
       "ban-keywords",
