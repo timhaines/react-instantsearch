@@ -96,20 +96,13 @@ describe('connectPagination', () => {
     });
   });
 
-  describe.skip('multi index', () => {
-    let context = {
-      context: {
-        ais: { mainTargetedIndex: 'first' },
-        multiIndexContext: { targetedIndex: 'first' },
-      },
-    };
-    const getProvidedProps = connect.getProvidedProps.bind(context);
-    const getSP = connect.getSearchParameters.bind(context);
-    const cleanUp = connect.cleanUp.bind(context);
+  describe('multi index', () => {
+    const contextValue = { mainTargetedIndex: 'first' };
+    const indexContextValue = { targetedIndex: 'first' };
 
     it('provides the correct props to the component', () => {
-      props = getProvidedProps(
-        {},
+      props = connect.getProvidedProps(
+        { contextValue, indexContextValue },
         {},
         { results: { first: { nbPages: 666 } } }
       );
@@ -119,8 +112,8 @@ describe('connectPagination', () => {
         canRefine: true,
       });
 
-      props = getProvidedProps(
-        {},
+      props = connect.getProvidedProps(
+        { contextValue, indexContextValue },
         { indices: { first: { page: 5 } } },
         { results: { first: { nbPages: 666 } } }
       );
@@ -132,10 +125,8 @@ describe('connectPagination', () => {
     });
 
     it("calling refine updates the widget's search state", () => {
-      let refine = connect.refine.bind(context);
-
-      let nextState = refine(
-        {},
+      let nextState = connect.refine(
+        { contextValue, indexContextValue },
         { indices: { first: { otherKey: 'val' } } },
         'yep'
       );
@@ -148,16 +139,11 @@ describe('connectPagination', () => {
         },
       });
 
-      context = {
-        context: {
-          ais: { mainTargetedIndex: 'first' },
-          multiIndexContext: { targetedIndex: 'second' },
+      nextState = connect.refine(
+        {
+          contextValue: { mainTargetedIndex: 'first' },
+          indexContextValue: { targetedIndex: 'second' },
         },
-      };
-      refine = connect.refine.bind(context);
-
-      nextState = refine(
-        {},
         { indices: { first: { otherKey: 'val', page: 'yep' } } },
         'yep'
       );
@@ -171,13 +157,17 @@ describe('connectPagination', () => {
 
     it('refines the page parameter', () => {
       const initSP = new SearchParameters();
-      params = getSP(initSP, {}, { indices: { first: { page: 667 } } });
+      params = connect.getSearchParameters(
+        initSP,
+        { contextValue, indexContextValue },
+        { indices: { first: { page: 667 } } }
+      );
       expect(params.page).toBe(666);
     });
 
     it('should return the right searchState when clean up', () => {
-      const newState = cleanUp(
-        {},
+      const newState = connect.cleanUp(
+        { contextValue, indexContextValue },
         {
           indices: {
             first: {
