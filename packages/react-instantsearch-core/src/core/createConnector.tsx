@@ -1,7 +1,12 @@
 import { isEqual } from 'lodash';
 import React, { Component, ReactType } from 'react';
 import { shallowEqual, getDisplayName, removeEmptyKey } from './utils';
-import { InstantSearchConsumer, InstantSearchContext } from './context';
+import {
+  InstantSearchConsumer,
+  InstantSearchContext,
+  IndexConsumer,
+  IndexContext,
+} from './context';
 
 function needlessUsageWarning(connectorDesc: ConnectorDescription) {
   if (process.env.NODE_ENV === 'development') {
@@ -72,6 +77,15 @@ type ConnectorDescription = {
   defaultProps?: {};
 };
 
+type ConnectorProps = {
+  contextValue: InstantSearchContext;
+  indexContextValue: IndexContext;
+};
+
+type ConnectorState = {
+  providedProps: {};
+};
+
 /**
  * Connectors are the HOC used to transform React components
  * into InstantSearch widgets.
@@ -95,14 +109,6 @@ export function createConnectorWithoutContext(
     typeof connectorDesc.getSearchParameters === 'function' ||
     typeof connectorDesc.getMetadata === 'function' ||
     typeof connectorDesc.transitionState === 'function';
-
-  type ConnectorProps = {
-    contextValue: InstantSearchContext;
-  };
-
-  type ConnectorState = {
-    providedProps: {};
-  };
 
   return (Composed: ReactType) => {
     class Connector extends Component<ConnectorProps, ConnectorState> {
@@ -384,7 +390,17 @@ const createConnectorWithContext = (connectorDesc: ConnectorDescription) => (
   // @TODO: does this need a display name?
   return props => (
     <InstantSearchConsumer>
-      {contextValue => <Connector contextValue={contextValue} {...props} />}
+      {contextValue => (
+        <IndexConsumer>
+          {indexContextValue => (
+            <Connector
+              contextValue={contextValue}
+              indexContextValue={indexContextValue}
+              {...props}
+            />
+          )}
+        </IndexConsumer>
+      )}
     </InstantSearchConsumer>
   );
 };

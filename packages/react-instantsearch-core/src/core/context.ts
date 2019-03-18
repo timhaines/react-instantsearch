@@ -27,3 +27,14 @@ export const {
   widgetsManager: {},
   mainTargetedIndex: '',
 });
+
+export type IndexContext = {
+  targetedIndex: string;
+};
+
+export const {
+  Consumer: IndexConsumer,
+  Provider: IndexProvider,
+} = createContext<IndexContext>({
+  targetedIndex: '',
+});
