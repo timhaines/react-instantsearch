@@ -148,13 +148,9 @@ describe('createConnector', () => {
 
       const context = createFakeContext();
 
-      const wrapper = mount(
-        <Connected {...props} contextValue={context} />,
-
-        {
-          disableLifecycleMethods: true,
-        }
-      );
+      const wrapper = mount(<Connected {...props} contextValue={context} />, {
+        disableLifecycleMethods: true,
+      });
 
       // Simulate props change before mount
       wrapper.setProps({ hello: 'again' });
