@@ -137,7 +137,7 @@ export default createConnector({
     // in sync. When we set the refinement the searchState is used but when we clear the refinement
     // the SearchParameters is used. In the first case when we render, the results are not there
     // so we can't find the value from the results. The most up to date value is the searchState.
-    // But when we clear the refinement the searchState is immediatly cleared even when the items
+    // But when we clear the refinement the searchState is immediately cleared even when the items
     // retrieved are still the one from the previous query with the bounding box. It leads to some
     // issue with the position of the map. We should rely on 1 source of truth or at least always
     // be sync.
