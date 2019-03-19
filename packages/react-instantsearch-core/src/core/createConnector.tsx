@@ -7,6 +7,12 @@ import {
   IndexConsumer,
   IndexContext,
 } from './context';
+import {
+  SearchState,
+  SearchResults,
+  SearchForFacetValuesResults,
+  MetaData,
+} from './createStore';
 
 function needlessUsageWarning(connectorDesc: ConnectorDescription) {
   if (process.env.NODE_ENV === 'development') {
@@ -36,51 +42,100 @@ function needlessUsageWarning(connectorDesc: ConnectorDescription) {
     }
   }
 }
-// @TODO: which are optional here, all?
+
+// @TODO: import from 'algoliasearch-helper'?
+type SearchParameters = {};
+
 type ConnectorDescription = {
+  /**
+   * Name of the Connector, PascalCase, starting With Algolia
+   */
   displayName: string;
+
   /**
    * a function to filter the local state
    */
-  refine?: (...args: any[]) => any;
+  refine?: (
+    props: ConnectorProps,
+    searchState: SearchState,
+    ...args: any[]
+  ) => any;
+
   /**
    * function transforming the local state to a SearchParameters
    */
-  getSearchParameters?: (...args: any[]) => any;
+  getSearchParameters?: (
+    searchParameters: SearchParameters,
+    props: ConnectorProps,
+    searchState: SearchState
+  ) => SearchParameters;
+
   /**
    * metadata of the widget (for current refinements)
    */
-  getMetadata?: (...args: any[]) => any;
+  getMetadata?: (props: ConnectorProps, searchState: SearchState) => any;
+
   /**
    * hook after the state has changed
    */
-  transitionState?: (...args: any[]) => any;
+  transitionState?: (
+    nextProps: ConnectorProps,
+    prevSearchState: SearchState,
+    nextSearchState: SearchState
+  ) => any;
+
   /**
    * transform the state into props passed to the wrapped component.
    * Receives (props, widgetStates, searchState, metadata) and returns the local state.
    */
-  getProvidedProps: (...args: any[]) => any;
+  getProvidedProps: (
+    props: ConnectorProps,
+    searchState: SearchState,
+    searchResults: SearchResults,
+    metadata: MetaData,
+    resultsFacetValues: SearchForFacetValuesResults
+  ) => any;
+
   /**
    * Receives props and return the id that will be used to identify the widget
    */
-  getId?: (...args: any[]) => string;
+  getId?: (...args: any[]) => string; // @TODO: is this even part of a ConnectorDesc?
+
   /**
    * hook when the widget will unmount. Receives (props, searchState) and return a cleaned state.
    */
-  cleanUp?: (...args: any[]) => any;
-  searchForFacetValues?: (...args: any[]) => any;
-  shouldComponentUpdate?: (...args: any[]) => boolean;
+  cleanUp?: (props: ConnectorProps, searchState: SearchState) => SearchState;
+
+  searchForFacetValues?: (
+    props: ConnectorProps,
+    searchState: SearchState,
+    ...args: any[]
+  ) => any;
+
+  /**
+   * Function that will be called on shouldComponentUpdate of the connector
+   */
+  shouldComponentUpdate?: (
+    props: ConnectorProps,
+    nextProps: ConnectorProps,
+    state: ConnectorState,
+    nextState: ConnectorState
+  ) => boolean;
+
   /**
    * PropTypes forwarded to the wrapped component.
    */
-  propTypes?: {}; // I can't find a definition for a propTypes object
+  propTypes?: {}; // @TODO: I can't find a definition for a propTypes object
+
   defaultProps?: {};
 };
 
-type ConnectorProps = {
+// @TODO: is this the correct way to allow overloading? Might be inferable from propTypes
+// This type probably should be defined within createConnector
+type ConnectorProps<WidgetProps = {}> = {
   contextValue: InstantSearchContext;
   indexContextValue: IndexContext;
-};
+} & WidgetProps;
 
 type ConnectorState = {
   providedProps: {};
@@ -164,7 +219,7 @@ export function createConnectorWithoutContext(
         }
       }
 
-      componentWillReceiveProps(nextProps) {
+      componentWillReceiveProps(nextProps: ConnectorProps) {
         if (!isEqual(this.props, nextProps)) {
           this.setState({
             providedProps: this.getProvidedProps(nextProps),
@@ -179,6 +234,7 @@ export function createConnectorWithoutContext(
                   this,
                   nextProps,
                   this.props.contextValue.store.getState().widgets,
+                  // @TODO: this is used as "prev" & "next", but is both next
                   this.props.contextValue.store.getState().widgets
                 )
               );
@@ -187,7 +243,10 @@ export function createConnectorWithoutContext(
         }
       }
 
-      shouldComponentUpdate(nextProps, nextState) {
+      shouldComponentUpdate(
+        nextProps: ConnectorProps,
+        nextState: ConnectorState
+      ) {
         if (typeof connectorDesc.shouldComponentUpdate === 'function') {
           return connectorDesc.shouldComponentUpdate.call(
             this,
