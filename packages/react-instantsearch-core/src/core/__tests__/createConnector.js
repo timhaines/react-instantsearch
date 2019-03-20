@@ -1409,9 +1409,6 @@ describe('createConnector', () => {
   message: hello,
   providedProps: {
     contextValue: context,
-    indexContextValue: {
-      targetedIndex: 
-    },
     message: hello
   }
 }</pre>"
