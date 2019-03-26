@@ -7,25 +7,30 @@ describe('connectScrollTo', () => {
   describe('single index', () => {
     const contextValue = { mainTargetedIndex: 'index' };
     it('provides the correct props to the component', () => {
-      props = connect.getProvidedProps(
+      const ctx = {};
+      props = connect.getProvidedProps.call(
+        ctx,
         { scrollOn: 'p', contextValue },
         { p: 1, configure: 3, refinementList: 'ok' }
       );
       expect(props).toEqual({ value: 1, hasNotChanged: false });
 
-      props = connect.getProvidedProps(
+      props = connect.getProvidedProps.call(
+        ctx,
         { scrollOn: 'p', contextValue },
         { p: 1, configure: 3, refinementList: 'not ok' }
       );
       expect(props).toEqual({ value: 1, hasNotChanged: false });
 
-      props = connect.getProvidedProps(
+      props = connect.getProvidedProps.call(
+        ctx,
         { scrollOn: 'p', contextValue },
         { p: 2, configure: 3, refinementList: 'not ok' }
       );
       expect(props).toEqual({ value: 2, hasNotChanged: true });
 
-      props = connect.getProvidedProps(
+      props = connect.getProvidedProps.call(
+        ctx,
         { scrollOn: 'anything', contextValue },
         { anything: 2 }
       );
@@ -37,9 +42,11 @@ describe('connectScrollTo', () => {
     const contextValue = { mainTargetedIndex: 'first' };
     const indexContextValue = { targetedIndex: 'second' };
     it('provides the correct props to the component', () => {
+      const ctx = {};
       const searchState = { indices: { second: { p: 1 } } };
 
-      props = connect.getProvidedProps(
+      props = connect.getProvidedProps.call(
+        ctx,
         { scrollOn: 'p', contextValue, indexContextValue },
         searchState
       );
@@ -47,7 +54,8 @@ describe('connectScrollTo', () => {
 
       searchState.indices.second = { ...searchState.indices.second, p: 2 };
 
-      props = connect.getProvidedProps(
+      props = connect.getProvidedProps.call(
+        ctx,
         { scrollOn: 'p', contextValue, indexContextValue },
         searchState
       );
@@ -58,7 +66,8 @@ describe('connectScrollTo', () => {
         anything: 'ok',
       };
 
-      props = connect.getProvidedProps(
+      props = connect.getProvidedProps.call(
+        ctx,
         { scrollOn: 'p', contextValue, indexContextValue },
         searchState
       );

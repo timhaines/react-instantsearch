@@ -100,7 +100,8 @@ describe('connectSortBy', () => {
     const indexContextValue = { targetedIndex: 'first' };
 
     it('provides the correct props to the component', () => {
-      props = connect.getProvidedProps(
+      props = connect.getProvidedProps.call(
+        {},
         {
           items: [{ value: 'yep' }, { value: 'yop' }],
           contextValue,
@@ -118,7 +119,8 @@ describe('connectSortBy', () => {
     });
 
     it("calling refine updates the widget's search state", () => {
-      const nextState = connect.refine(
+      const nextState = connect.refine.call(
+        {},
         { contextValue, indexContextValue },
         { otherKey: 'val' },
         'yep'
@@ -130,7 +132,8 @@ describe('connectSortBy', () => {
     });
 
     it('refines the index parameter', () => {
-      params = connect.getSearchParameters(
+      params = connect.getSearchParameters.call(
+        {},
         new SearchParameters(),
         { contextValue, indexContextValue },
         { indices: { first: { sortBy: 'yep' } } }
@@ -139,7 +142,8 @@ describe('connectSortBy', () => {
     });
 
     it('should return the right searchState when clean up', () => {
-      const searchState = connect.cleanUp(
+      const searchState = connect.cleanUp.call(
+        {},
         { contextValue, indexContextValue },
         {
           indices: { first: { sortBy: { searchState: 'searchState' } } },
